@@ -73,6 +73,21 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 		
 		// the actual search
         // TODO: Fill this in.
+        Node temp=root;
+        while(temp!=null)
+        {
+        	int cmp =k.compareTo(temp.key);
+        	if(cmp>0)
+        	{
+        		temp=temp.right;
+        	}
+        	else if(cmp<0){
+        		temp=temp.left;
+        	}
+        	else{
+        		return temp;
+        	}
+        }
         return null;
 	}
 
@@ -118,7 +133,15 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	public Set<K> keySet() {
 		Set<K> set = new LinkedHashSet<K>();
         // TODO: Fill this in.
-		return set;
+		return keySetHelper(set,root);
+	}
+
+	public void keySetHelper(Set<K> set,Node node)
+	{
+		if(node===null)return;
+		keySetHelper(set,node.left);
+		set.add(node.key);
+		keySetHelper(set,node.right);
 	}
 
 	@Override
@@ -136,6 +159,53 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 
 	private V putHelper(Node node, K key, V value) {
         // TODO: Fill this in.
+        Node new_node = new Node(key,value);
+        @SuppressWarnings("unchecked")
+		Comparable<? super K> k = (Comparable<? super K>) new_node;
+        while(node!=null)
+        {
+        	int cmp = k.compareTo(node.key);
+        	if(node.left!=null)
+        	{
+        		if(k.compareTo(node.left.key)==0)
+        		{
+           			V temp = node.left.value;
+	       			new_node.left = node.left.left;
+        			new_node.right = node.left.right;
+        			node.left = new_node;
+        			return temp;
+        		}
+        	}
+        	if(node.right!=null)
+        	{
+        		if(k.compareTo(node.right.key)==0)
+        		{
+        			V temp = node.right.value;
+        			new_node.left = node.right.left;
+        			new_node.right = node.right.right;
+        			node.right = new_node;
+        			return temp;
+        		}
+        	}
+        	if(cmp>0)
+        	{
+        		if(node.right==null)
+        		{
+        			node.right = new_node;
+        			return null;
+        		}
+        		node = node.right;
+        	}
+        	else if(cmp<0)
+        	{
+        		if(node.left==null)
+        		{
+        			node.left=new_node;
+        			return null;
+        		}
+        		node=node.left;
+        	}
+        }
         return null;
 	}
 
