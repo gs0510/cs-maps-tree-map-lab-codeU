@@ -107,6 +107,15 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 
 	@Override
 	public boolean containsValue(Object target) {
+		return auxContainsValue(root,target);
+	}
+
+	public boolean auxContainsValue(Node root,Object target)
+	{
+		if(root==null)return false;
+		if(equals(root.value,target))return true;
+		if(auxContainsValue(root.left,target)) return true;
+		if(auxContainsValue(root.right,target)) return true;
 		return false;
 	}
 
@@ -139,7 +148,7 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 
 	public void keySetHelper(Set<K> set,Node node)
 	{
-		if(node===null)return;
+		if(node==null)return;
 		keySetHelper(set,node.left);
 		set.add(node.key);
 		keySetHelper(set,node.right);
@@ -162,49 +171,35 @@ public class MyTreeMap<K, V> implements Map<K, V> {
         // TODO: Fill this in.
         Node new_node = new Node(key,value);
         @SuppressWarnings("unchecked")
-		Comparable<? super K> k = (Comparable<? super K>) new_node;
+		Comparable<? super K> k = (Comparable<? super K>) key;
         while(node!=null)
         {
         	int cmp = k.compareTo(node.key);
-        	if(node.left!=null)
-        	{
-        		if(k.compareTo(node.left.key)==0)
-        		{
-           			V temp = node.left.value;
-	       			new_node.left = node.left.left;
-        			new_node.right = node.left.right;
-        			node.left = new_node;
-        			return temp;
-        		}
-        	}
-        	if(node.right!=null)
-        	{
-        		if(k.compareTo(node.right.key)==0)
-        		{
-        			V temp = node.right.value;
-        			new_node.left = node.right.left;
-        			new_node.right = node.right.right;
-        			node.right = new_node;
-        			return temp;
-        		}
-        	}
         	if(cmp>0)
         	{
         		if(node.right==null)
         		{
+        			size++;
         			node.right = new_node;
         			return null;
         		}
-        		node = node.right;
+        		else node = node.right;
         	}
         	else if(cmp<0)
         	{
         		if(node.left==null)
         		{
+        			size++;
         			node.left=new_node;
         			return null;
         		}
-        		node=node.left;
+        		else node=node.left;
+        	}
+        	else if(cmp==0)
+        	{
+        		V temp = node.value;
+        		node.value = new_node.value;
+        		return temp;
         	}
         }
         return null;
